@@ -1,0 +1,8 @@
+# vim
+**.swp
+
+# VS Code
+.vscode/
+
+# Distribution/packaging
+build/
