@@ -1,6 +1,9 @@
 BUCK_DIR = $(HOME)/.buck
 UNAME_S := $(shell uname -s)
 
+# get default shell for user
+DEFAULT_SHELL=$(shell finger $(USER) | grep 'Shell:*' | cut -f3 -d ":")
+
 # use sudo if non-root user
 THISUSER := $(shell whoami)
 ifeq (x$(THISUSER), xroot)
@@ -45,12 +48,14 @@ buck:
 	cd $(BUCK_DIR) && ant
 	cd $(BUCK_DIR) && ./bin/buck build --show-output buck
 
-	@if [[ "$(SHELL)" == *"zsh"* ]]; then \
+	echo $(DEFAULT_SHELL)
+	
+	@if [[ "$(DEFAULT_SHELL)" == *"zsh"* ]]; then \
 		echo "\nexport PATH=$(HOME)/.buck/bin:$(PATH)" >> ~/.zshrc; \
-	elif [[ "$(SHELL)" == *"bash"* ]]; then \
+	elif [[ "$(DEFAULT_SHELL)" == *"bash"* ]]; then \
 		echo "\nexport PATH=$(HOME)/.buck/bin:$(PATH)" >> ~/.bashrc; \
 	else \
-		echo "Not using bash or zsh (Using $(SHELL)). Setup buck path manually."; \
+		echo "Not using bash or zsh (Using $(DEFAULT_SHELL)). Setup buck path manually."; \
 	fi
 .PHONY: clean
 clean:
