@@ -18,6 +18,7 @@ endif
 bootstrap:
 	$(MAKE) _bootstrap
 	$(MAKE) buck
+	$(MAKE) buckaroo
 
 ifeq ($(UNAME_S),Linux)
 _bootstrap:
@@ -60,6 +61,11 @@ buck:
 	else \
 		echo "Not using bash or zsh (Using $(DEFAULT_SHELL)), or PATH already set up. Setup buck path manually."; \
 	fi
+
+.PHONY: buckaroo
+buckaroo:
+	wget https://github.com/LoopPerfect/buckaroo/releases/download/v2.2.0/buckaroo-macos -O $(BUCK_DIR)/bin/buckaroo
+	chmod +x $(BUCK_DIR)/bin/buckaroo
 
 .PHONY: clean
 clean:
