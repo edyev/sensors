@@ -3,6 +3,8 @@ UNAME_S := $(shell uname -s)
 
 # get default shell for user
 DEFAULT_SHELL=$(shell finger $(USER) | grep 'Shell:*' | cut -f3 -d ":")
+BUCK_PATH_VAR="export PATH=$(HOME)/.buck/bin:$(PATH)"
+BUCK_PATH_UPDATED=$(shell grep "export PATH=$(HOME)/.buck/bin:$(PATH)" 2> /dev/null; echo $$?)
 
 # use sudo if non-root user
 THISUSER := $(shell whoami)
@@ -39,24 +41,26 @@ endif
 .PHONY: _bootstrap
 _bootstrap:
 
-
 .PHONY: buck 
 buck:
+	# clone and install buck build system
 	if [ ! -d $(BUCK_DIR) ]; then \
 		git clone https://github.com/facebook/buck.git --depth 1 $(BUCK_DIR); \
 	fi
 	cd $(BUCK_DIR) && ant
 	cd $(BUCK_DIR) && ./bin/buck build --show-output buck
 
-	echo $(DEFAULT_SHELL)
-	
-	@if [[ "$(DEFAULT_SHELL)" == *"zsh"* ]]; then \
-		echo "\nexport PATH=$(HOME)/.buck/bin:$(PATH)" >> ~/.zshrc; \
-	elif [[ "$(DEFAULT_SHELL)" == *"bash"* ]]; then \
-		echo "\nexport PATH=$(HOME)/.buck/bin:$(PATH)" >> ~/.bashrc; \
+	# add ~/.buck/bin to PATH (if not already present)
+	@if [[ ( "$(DEFAULT_SHELL)" == *"zsh"* ) && ( "$(PATH)" != *"$(HOME)/.buck/bin"* ) ]]; then \
+		echo "\nexport PATH=\"$(HOME)/.buck/bin:\$$PATH\"" >> ~/.zshrc; \
+		echo "~/.zshrc updated. Please restart shell to add buck to PATH."; \
+	elif [[ ( "$(DEFAULT_SHELL)" == *"bash"* ) && ( "$(PATH)" != *"$(HOME)/.buck/bin"* ) ]]; then \
+		echo "\nexport PATH=\"$(HOME)/.buck/bin:\$$PATH\"" >> ~/.bashrc; \
+		echo "~/.bashrc updated. Please restart shell to add buck to PATH."; \
 	else \
-		echo "Not using bash or zsh (Using $(DEFAULT_SHELL)). Setup buck path manually."; \
+		echo "Not using bash or zsh (Using $(DEFAULT_SHELL)), or PATH already set up. Setup buck path manually."; \
 	fi
+
 .PHONY: clean
 clean:
 	rm -rf build
