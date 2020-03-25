@@ -1,3 +1,5 @@
+image: registry.gitlab.com/ontera/sw-team/flintstones/basecamp_service:latest
+
 variables:
   # When using dind service, we need to instruct docker, to talk with
   # the daemon started inside of the service. The daemon is available
@@ -44,7 +46,6 @@ build_docker:
       - clone_dependencies.sh
 
 build_basecamp_service:
-  image: registry.gitlab.com/ontera/sw-team/flintstones/basecamp_service:latest
   stage: build
   script:
     - make
@@ -53,7 +54,6 @@ build_basecamp_service:
       - build
 
 test_basecamp_service:
-  image: registry.gitlab.com/ontera/sw-team/flintstones/basecamp_service:latest
   stage: test
   script:
     - make test
