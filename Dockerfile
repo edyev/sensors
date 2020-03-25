@@ -19,6 +19,7 @@ RUN apt-get -y -q install --no-install-recommends \
     curl \
     g++ \
     unzip
+RUN mkdir -p $REPO_DIR
 COPY clone_dependencies.sh $REPO_DIR
 COPY Makefile $REPO_DIR
 WORKDIR $REPO_DIR
