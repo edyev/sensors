@@ -43,6 +43,7 @@ build_docker:
     changes:
       - Dockerfile
       - Makefile
+      - clone_dependencies.sh
 
 build_basecamp_service:
   stage: build
