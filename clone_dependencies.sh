@@ -1,8 +1,8 @@
 DEPENDENCY_DIR=dependencies
 
-PROTOBUF_NAME=protobuf
-PROTOBUF_REPO=protocolbuffers/protobuf
-PROTOBUF_VER=v3.11.4
+SCHEMA_REGISTRY_NAME=schema_registry
+SCHEMA_REGISTRY_REPO=ontera/sw-team/schema_registry
+SCHEMA_REGISTRY_VER=0.3.0
 
 NANOMSG_NAME=nanomsg
 NANOMSG_REPO=nanomsg/nanomsg
@@ -30,7 +30,7 @@ function fetch_from_github() {
     fi
 }
 
-fetch_from_github $PROTOBUF_NAME $PROTOBUF_REPO $PROTOBUF_VER
+fetch_from_gitlab $SCHEMA_REGISTRY_NAME $SCHEMA_REGISTRY_REPO $SCHEMA_REGISTRY_VER
 fetch_from_github $NANOMSG_NAME $NANOMSG_REPO $NANOMSG_VER
 fetch_from_github $CXXOPTS_NAME $CXXOPTS_REPO $CXXOPTS_VER
 fetch_from_github $LIBUSB_NAME $LIBUSB_REPO $LIBUSB_VER

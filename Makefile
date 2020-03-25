@@ -1,6 +1,10 @@
 UNAME_S := $(shell uname -s)
 BUILDDIR = build
 
+PROTO_PATH := ./proto_files
+PROTO_FILES := data_service.proto envelope.proto
+PROTO_CC_FILES := $(PROTO_FILES:.proto=.pb.cc)
+
 # use sudo if non-root user
 THISUSER := $(shell whoami)
 ifeq (x$(THISUSER), xroot)
@@ -22,7 +26,15 @@ ifeq ($(UNAME_S),Linux)
 _bootstrap:
 	$(SUDO_CMD) apt-get update
 	$(SUDO_CMD) apt-get -y -q install --no-install-recommends \
-		cmake;
+	    git \
+	    make \
+	    cmake \
+	    autoconf \
+	    automake \
+	    libtool \
+	    curl \
+	    g++ \
+	    unzip;
 else ifeq ($(UNAME_S),Darwin)
 _bootstrap:
 	@if [ -x /opt/local/bin/port ]; then \
@@ -40,6 +52,26 @@ endif
 clone_dependencies:
 	./clone_dependencies.sh
 
+.PHONY: install_dependencies
+install_dependencies:
+	$(MAKE) protobuf
+	$(MAKE) nanomsg
+
+.PHONY: nanomsg
+nanomsg: ##			Install nanomsg C library
+nanomsg: $(BUILDDIR)/nanomsg
+	./dependencies/nanomsg/build && cmake .. -DCMAKE_INSTALL_PREFIX=$(PREFIX) -DCMAKE_MACOSX_RPATH=ON -DCMAKE_INSTALL_RPATH="$(PREFIX)/lib"
+	./dependencies/nanomsg/build && cmake --build .
+	./dependencies/nanomsg/build && ctest .
+	./dependencies/nanomsg/build && cmake --build . --target install
+ifeq ($(UNAME_S),Linux)
+	$(SUDO_CMD) ldconfig
+endif
+
+.PHONY: protobuf
+protobuf:
+	cd ./dependencies/schema_registry && $(MAKE) install-protobuf-cpp
+
 $(BUILDDIR):
 	mkdir -p build
 
@@ -47,13 +79,31 @@ $(BUILDDIR)/basecamp_service: $(BUILDDIR)
 	cd $(BUILDDIR) && cmake ../libbasecamp_service
 	make -C $(BUILDDIR)
 
+.PHONY: update_protobufs
+update_protobufs:
+	rm -rf dependencies/schema_registry
+	$(MAKE) clone_dependencies
+	mkdir -p ./proto_files
+	cp dependencies/schema_registry/proto_files/envelope.proto ./proto_files/.
+	cp dependencies/schema_registry/proto_files/data_service.proto ./proto_files/.
+	$(MAKE) libbasecamp_service/src/momd_connection/envelope.pb.cc
+	$(MAKE) libbasecamp_service/src/data_service.pb.cc
+
+libbasecamp_service/src/%.pb.cc: $(PROTO_PATH)/%.proto
+	protoc --cpp_out=libbasecamp_service/src --proto_path=$(PROTO_PATH) $<
+
+.PHONY: help
+help: ##			Show this help.
+	@echo "Welcome to basecamp_service! Please use \`make <target>\` where <target> is one of the following:"
+	@fgrep -h "##" Makefile | fgrep -v fgrep | sed -e 's/:[[:space:]]*##//'
+
 .PHONY: test
 test:
 	make -C $(BUILDDIR) test
 
 .PHONY: clean
 clean:
-	rm -rf build
+	rm -rf $(PROTO_PY_FILES) $(BUILDDIR)
 
 .PHONY: clean_deps
 clean_deps:
