@@ -36,6 +36,7 @@ _bootstrap:
 	    libtool \
 	    curl \
 	    g++ \
+		ca-certificates \
 	    unzip;
 else ifeq ($(UNAME_S),Darwin)
 _bootstrap:
