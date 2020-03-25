@@ -18,7 +18,9 @@ RUN apt-get -y -q install --no-install-recommends \
     libtool \
     curl \
     g++ \
-    unzip
+    ca-certificates \
+    unzip \
+    wget
 RUN mkdir -p $REPO_DIR
 COPY clone_dependencies.sh $REPO_DIR
 COPY Makefile $REPO_DIR
