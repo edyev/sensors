@@ -5,6 +5,8 @@ PROTO_PATH := ./proto_files
 PROTO_FILES := data_service.proto envelope.proto
 PROTO_CC_FILES := $(PROTO_FILES:.proto=.pb.cc)
 
+override SHELL = /bin/bash
+
 # use sudo if non-root user
 THISUSER := $(shell whoami)
 ifeq (x$(THISUSER), xroot)
@@ -96,6 +98,18 @@ libbasecamp_service/src/%.pb.cc: $(PROTO_PATH)/%.proto
 help: ##			Show this help.
 	@echo "Welcome to basecamp_service! Please use \`make <target>\` where <target> is one of the following:"
 	@fgrep -h "##" Makefile | fgrep -v fgrep | sed -e 's/:[[:space:]]*##//'
+
+.PHONY: docker
+docker: ##		Build and upload CI docker image
+	echo "$(GITLAB_API_TOKEN)" | docker login registry.gitlab.com/ontera/sw-team/flintstones/basecamp_service --username gitlab-ci-token --password-stdin
+	docker build -t registry.gitlab.com/ontera/sw-team/flintstones/basecamp_service . --build-arg GITLAB_TOKEN=$(GITLAB_TOKEN)
+	docker push registry.gitlab.com/ontera/sw-team/flintstones/basecamp_service
+
+.PHONY: docker_interactive 
+docker_interactive: ##		Download and run CI docker image interactively
+	echo "$(GITLAB_API_TOKEN)" | docker login registry.gitlab.com/ontera/sw-team/flintstones/basecamp_service:latest --username gitlab-ci-token --password-stdin
+	docker pull registry.gitlab.com/ontera/sw-team/flintstones/basecamp_service
+	docker run -it -v `pwd`:/builds/ontera/sw-team/flintstones/basecamp_service registry.gitlab.com/ontera/sw-team/flintstones/basecamp_service:latest bash
 
 .PHONY: test
 test:
