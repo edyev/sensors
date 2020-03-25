@@ -8,6 +8,10 @@ NANOMSG_NAME=nanomsg
 NANOMSG_REPO=nanomsg/nanomsg
 NANOMSG_VER=1.1.5
 
+CXXOPTS_NAME=cxxopts
+CXXOPTS_REPO=jarro2783/cxxopts
+CXXOPTS_VER=v2.2.0
+
 LIBUSB_NAME=libusb
 LIBUSB_REPO=libusb/libusb
 LIBUSB_VER=v1.0.23-rc1
@@ -28,4 +32,5 @@ function fetch_from_github() {
 
 fetch_from_github $PROTOBUF_NAME $PROTOBUF_REPO $PROTOBUF_VER
 fetch_from_github $NANOMSG_NAME $NANOMSG_REPO $NANOMSG_VER
+fetch_from_github $CXXOPTS_NAME $CXXOPTS_REPO $CXXOPTS_VER
 fetch_from_github $LIBUSB_NAME $LIBUSB_REPO $LIBUSB_VER
