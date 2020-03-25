@@ -44,12 +44,12 @@ $(BUILDDIR):
 	mkdir -p build
 
 $(BUILDDIR)/basecamp_service: $(BUILDDIR)
-	cd $(BUILDDIR) && cmake ..
+	cd $(BUILDDIR) && cmake ../libbasecamp_service
 	make -C $(BUILDDIR)
 
 .PHONY: test
 test:
-	cd build && ctest ..
+	make -C $(BUILDDIR) test
 
 .PHONY: clean
 clean:
