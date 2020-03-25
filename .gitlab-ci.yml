@@ -28,7 +28,7 @@ variables:
 stages:
   - docker
   - build
-  - deploy
+  - test
 
 build_docker:
   image: docker:19.03.1
