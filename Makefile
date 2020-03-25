@@ -1,4 +1,5 @@
 UNAME_S := $(shell uname -s)
+BUILDDIR = build
 
 # use sudo if non-root user
 THISUSER := $(shell whoami)
@@ -7,6 +8,11 @@ ifeq (x$(THISUSER), xroot)
 else
 	SUDO_CMD = sudo
 endif
+
+.PHONY: all
+all:
+	$(MAKE) clone_dependencies
+	$(MAKE) $(BUILDDIR)/basecamp_service
 
 .PHONY: bootstrap
 bootstrap:
@@ -29,6 +35,17 @@ else
 _bootstrap:
 	@$(error Unsupported platform: $(UNAME_S))
 endif
+
+.PHONY: clone_dependencies
+clone_dependencies:
+	./clone_dependencies.sh
+
+$(BUILDDIR):
+	mkdir -p build
+
+$(BUILDDIR)/basecamp_service: $(BUILDDIR)
+	cd $(BUILDDIR) && cmake ..
+	make -C $(BUILDDIR)
 
 .PHONY: clean
 clean:
