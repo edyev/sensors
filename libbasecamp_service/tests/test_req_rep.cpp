@@ -2,7 +2,7 @@
 
 int main(int argc, char *argv[])
 {
-    std::cout << "Hey, there!" << std::endl;
+    std::cout << "Running test..." << std::endl;
 
     return 0;
 }

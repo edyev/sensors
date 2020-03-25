@@ -104,4 +104,7 @@ install(
 # define test executables
 ########################
 include(CTest)
-# add_test(NAME plain-run COMMAND $<TARGET_FILE:test_req_rep>)
+add_executable(test_req_rep
+    libbasecamp_service/tests/test_req_rep.cpp
+)
+add_test(NAME smoke-test COMMAND $<TARGET_FILE:test_req_rep>)

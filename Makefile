@@ -47,6 +47,10 @@ $(BUILDDIR)/basecamp_service: $(BUILDDIR)
 	cd $(BUILDDIR) && cmake ..
 	make -C $(BUILDDIR)
 
+.PHONY: test
+test:
+	cd build && ctest ..
+
 .PHONY: clean
 clean:
 	rm -rf build
