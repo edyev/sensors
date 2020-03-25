@@ -36,8 +36,9 @@ _bootstrap:
 	    libtool \
 	    curl \
 	    g++ \
-		ca-certificates \
-	    unzip;
+	    ca-certificates \
+	    unzip \
+	    wget;
 else ifeq ($(UNAME_S),Darwin)
 _bootstrap:
 	@if [ -x /opt/local/bin/port ]; then \
