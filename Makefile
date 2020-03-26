@@ -63,6 +63,7 @@ install_dependencies:
 
 .PHONY: nanomsg
 nanomsg: ##			Install nanomsg C library
+	mkdir -p ./dependencies/nanomsg/build
 	./dependencies/nanomsg/build && cmake .. -DCMAKE_INSTALL_PREFIX=$(PREFIX) -DCMAKE_MACOSX_RPATH=ON -DCMAKE_INSTALL_RPATH="$(PREFIX)/lib"
 	./dependencies/nanomsg/build && cmake --build .
 	./dependencies/nanomsg/build && ctest .
