@@ -15,9 +15,6 @@ set(DEBUG_CXX_OPTIONS_CLANG -Wweak-vtables -Wexit-time-destructors -Wglobal-cons
 set(RELEASE_CXX_OPTIONS -Wall -Wextra -Wunreachable-code -Wpedantic)
 set(RELEASE_CXX_OPTIONS_CLANG -Wweak-vtables -Wexit-time-destructors -Wglobal-constructors -Wmissing-noreturn)
 
-# define code coverage compiler/linker options
-set(CODE_COVERAGE_OPTIONS -fprofile-arcs -ftest-coverage)
-
 ########################
 # define libbasecamp_service build
 ########################
@@ -49,12 +46,10 @@ target_include_directories(libbasecamp_service
 )
 target_compile_definitions(libbasecamp_service PUBLIC  __STDC_LIMIT_MACROS __STDC_FORMAT_MACROS)
 
-# set compiler/linker options (e.g. warning levels, code coverage) for various platforms
+# set compiler/linker options (e.g. warning levels) for various platforms
 if ( CMAKE_CXX_COMPILER_ID MATCHES "Clang|AppleClang|GNU" )
     target_compile_options(libbasecamp_service PRIVATE "$<$<CONFIG:DEBUG>:${DEBUG_CXX_OPTIONS}>")
     target_compile_options(libbasecamp_service PRIVATE "$<$<CONFIG:RELEASE>:${DEBUG_CXX_OPTIONS}>")
-    target_link_options(libbasecamp_service PRIVATE "$<$<CONFIG:DEBUG>:${CODE_COVERAGE_OPTIONS}>")
-    target_link_options(libbasecamp_service PRIVATE "$<$<CONFIG:DEBUG>:${CODE_COVERAGE_OPTIONS}>")
 endif()
 if ( CMAKE_CXX_COMPILER_ID MATCHES "Clang" )
     target_compile_options(libbasecamp_service PRIVATE "$<$<CONFIG:DEBUG>:${DEBUG_CXX_OPTIONS_CLANG}>")
