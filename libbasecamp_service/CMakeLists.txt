@@ -8,6 +8,12 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+# set com
+set(DEBUG_CXX_OPTIONS -Wall -Wextra -Wunreachable-code -Wpedantic)
+set(DEBUG_CXX_OPTIONS_CLANG -Wweak-vtables -Wexit-time-destructors -Wglobal-constructors -Wmissing-noreturn)
+set(RELEASE_CXX_OPTIONS -Wall -Wextra -Wunreachable-code -Wpedantic)
+set(RELEASE_CXX_OPTIONS_CLANG -Wweak-vtables -Wexit-time-destructors -Wglobal-constructors -Wmissing-noreturn)
+
 ########################
 # define libbasecamp_service build
 ########################
@@ -41,13 +47,12 @@ target_compile_definitions(libbasecamp_service PUBLIC  __STDC_LIMIT_MACROS __STD
 
 # set warning levels for various platforms
 if ( CMAKE_CXX_COMPILER_ID MATCHES "Clang|AppleClang|GNU" )
-    target_compile_options(libbasecamp_service PRIVATE -Wall -Wextra -Wunreachable-code -Wpedantic)
+    target_compile_options(libbasecamp_service PRIVATE "$<$<CONFIG:DEBUG>:${DEBUG_CXX_OPTIONS}>")
+    target_compile_options(libbasecamp_service PRIVATE "$<$<CONFIG:RELEASE>:${DEBUG_CXX_OPTIONS}>")
 endif()
 if ( CMAKE_CXX_COMPILER_ID MATCHES "Clang" )
-    target_compile_options(libbasecamp_service PRIVATE -Wweak-vtables -Wexit-time-destructors -Wglobal-constructors -Wmissing-noreturn)
-endif()
-if ( CMAKE_CXX_COMPILER_ID MATCHES "MSVC" )
-    target_compile_options(libbasecamp_service PRIVATE /W4 /w44265 /w44061 /w44062)
+    target_compile_options(libbasecamp_service PRIVATE "$<$<CONFIG:DEBUG>:${DEBUG_CXX_OPTIONS_CLANG}>")
+    target_compile_options(libbasecamp_service PRIVATE "$<$<CONFIG:RELEASE>:${DEBUG_CXX_OPTIONS_CLANG}>")
 endif()
 
 ########################
