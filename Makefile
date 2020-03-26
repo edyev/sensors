@@ -1,5 +1,6 @@
 UNAME_S := $(shell uname -s)
 BUILDDIR = build
+PREFIX = /usr/local
 
 PROTO_PATH := ./proto_files
 PROTO_FILES := data_service.proto envelope.proto
@@ -63,18 +64,18 @@ install_dependencies:
 
 .PHONY: nanomsg
 nanomsg: ##			Install nanomsg C library
-	mkdir -p ./dependencies/nanomsg/build
-	./dependencies/nanomsg/build && cmake .. -DCMAKE_INSTALL_PREFIX=$(PREFIX) -DCMAKE_MACOSX_RPATH=ON -DCMAKE_INSTALL_RPATH="$(PREFIX)/lib"
-	./dependencies/nanomsg/build && cmake --build .
-	./dependencies/nanomsg/build && ctest .
-	./dependencies/nanomsg/build && cmake --build . --target install
+	mkdir -p dependencies/nanomsg/build
+	cd dependencies/nanomsg/build && cmake .. -DCMAKE_INSTALL_PREFIX=$(PREFIX) -DCMAKE_MACOSX_RPATH=ON -DCMAKE_INSTALL_RPATH="$(PREFIX)/lib"
+	cd dependencies/nanomsg/build && cmake --build .
+	cd dependencies/nanomsg/build && ctest .
+	cd dependencies/nanomsg/build && cmake --build . --target install
 ifeq ($(UNAME_S),Linux)
 	$(SUDO_CMD) ldconfig
 endif
 
 .PHONY: protobuf
 protobuf: ##			Install protobuf C++
-	cd ./dependencies/schema_registry && $(MAKE) install-protobuf-cpp
+	cd dependencies/schema_registry && $(MAKE) install-protobuf-cpp PREFIX=$(PREFIX)
 
 $(BUILDDIR):
 	mkdir -p build
