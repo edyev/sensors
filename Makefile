@@ -63,7 +63,6 @@ install_dependencies:
 
 .PHONY: nanomsg
 nanomsg: ##			Install nanomsg C library
-nanomsg: $(BUILDDIR)/nanomsg
 	./dependencies/nanomsg/build && cmake .. -DCMAKE_INSTALL_PREFIX=$(PREFIX) -DCMAKE_MACOSX_RPATH=ON -DCMAKE_INSTALL_RPATH="$(PREFIX)/lib"
 	./dependencies/nanomsg/build && cmake --build .
 	./dependencies/nanomsg/build && ctest .
@@ -73,7 +72,7 @@ ifeq ($(UNAME_S),Linux)
 endif
 
 .PHONY: protobuf
-protobuf:
+protobuf: ##			Install protobuf C++
 	cd ./dependencies/schema_registry && $(MAKE) install-protobuf-cpp
 
 $(BUILDDIR):
