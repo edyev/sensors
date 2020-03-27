@@ -1,20 +1,3 @@
-cmake_minimum_required(VERSION 3.8)
-
-include(GNUInstallDirs)
-
-project(libbasecamp_service VERSION 0.1 LANGUAGES CXX)
-
-# use C++14 standard
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
-
-# define compiler flags for different build modes
-set(DEBUG_CXX_OPTIONS -Wall -Wextra -Wunreachable-code -Wpedantic)
-set(DEBUG_CXX_OPTIONS_CLANG -Wweak-vtables -Wexit-time-destructors -Wglobal-constructors -Wmissing-noreturn)
-set(RELEASE_CXX_OPTIONS -Wall -Wextra -Wunreachable-code -Wpedantic)
-set(RELEASE_CXX_OPTIONS_CLANG -Wweak-vtables -Wexit-time-destructors -Wglobal-constructors -Wmissing-noreturn)
-
 ########################
 # define libbasecamp_service build
 ########################
@@ -43,8 +26,10 @@ target_include_directories(libbasecamp_service
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/basecamp_service>
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
-target_compile_definitions(libbasecamp_service PUBLIC  __STDC_LIMIT_MACROS __STDC_FORMAT_MACROS)
+target_compile_definitions(libbasecamp_service PUBLIC __STDC_LIMIT_MACROS __STDC_FORMAT_MACROS)
 
 # set compiler/linker options (e.g. warning levels) for various platforms
 if ( CMAKE_CXX_COMPILER_ID MATCHES "Clang|AppleClang|GNU" )
@@ -62,6 +47,7 @@ find_package(Nnxx 0.2.1 REQUIRED)
 
 target_link_libraries(libbasecamp_service
     PUBLIC
+        Protobuf
         nnxx::nnxx
 )
 
@@ -69,7 +55,7 @@ target_link_libraries(libbasecamp_service
 # installation
 ########################
 # set up libbasecamp_service install
-set(INSTALL_CONFIGDIR ${CMAKE_INSTALL_LIBDIR}/CMake/BasecampService)
+set(INSTALL_CONFIGDIR ${CMAKE_INSTALL_LIBDIR}/cmake/BasecampService)
 
 install(
     TARGETS
@@ -124,6 +110,7 @@ add_executable(test_req_rep
 )
 target_link_libraries(test_req_rep
     PUBLIC
+        Protobuf
         nnxx::nnxx
         BasecampService::libbasecamp_service
 )

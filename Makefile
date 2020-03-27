@@ -96,7 +96,7 @@ $(BUILDDIR):
 	mkdir -p build
 
 $(BUILDDIR)/basecamp_service: $(BUILDDIR)
-	cd $(BUILDDIR) && cmake -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) ../libbasecamp_service
+	cd $(BUILDDIR) && cmake -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) ..
 	make -C $(BUILDDIR) VERBOSE=$(VERBOSE)
 
 .PHONY: update_protobufs
