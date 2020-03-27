@@ -34,6 +34,7 @@ _bootstrap:
 	    git \
 	    make \
 	    cmake \
+	    pkg-config \
 	    autoconf \
 	    automake \
 	    libtool \

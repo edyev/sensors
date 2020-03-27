@@ -13,6 +13,7 @@ RUN apt-get -y -q install --no-install-recommends \
     git \
     make \
     cmake \
+    pkg-config \
     autoconf \
     automake \
     libtool \
