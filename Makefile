@@ -63,6 +63,7 @@ clone_dependencies:
 install_dependencies:
 	$(MAKE) protobuf
 	$(MAKE) nanomsg
+	$(MAKE) nanomsgxx
 
 .PHONY: nanomsg
 nanomsg: ##			Install nanomsg C library
@@ -70,7 +71,18 @@ nanomsg: ##			Install nanomsg C library
 	cd dependencies/nanomsg/build && cmake .. -DCMAKE_INSTALL_PREFIX=$(PREFIX) -DCMAKE_MACOSX_RPATH=ON -DCMAKE_INSTALL_RPATH="$(PREFIX)/lib"
 	cd dependencies/nanomsg/build && cmake --build .
 	cd dependencies/nanomsg/build && ctest .
-	cd dependencies/nanomsg/build && cmake --build . --target install
+	cd dependencies/nanomsg/build && $(SUDO_CMD) cmake --build . --target install
+ifeq ($(UNAME_S),Linux)
+	$(SUDO_CMD) ldconfig
+endif
+
+.PHONY: nanomsgxx
+nanomsgxx: ##			Install nanomsgxx C++ library
+	mkdir -p dependencies/nanomsgxx/build
+	cd dependencies/nanomsgxx/build && cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$(PREFIX) -DCMAKE_MACOSX_RPATH=ON -DCMAKE_INSTALL_RPATH="$(PREFIX)/lib"
+	$(MAKE) -C dependencies/nanomsgxx/build
+	$(MAKE) -C dependencies/nanomsgxx/build test
+	$(SUDO_CMD) $(MAKE) -C dependencies/nanomsgxx/build install
 ifeq ($(UNAME_S),Linux)
 	$(SUDO_CMD) ldconfig
 endif

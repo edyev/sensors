@@ -56,6 +56,15 @@ if ( CMAKE_CXX_COMPILER_ID MATCHES "Clang" )
     target_compile_options(libbasecamp_service PRIVATE "$<$<CONFIG:RELEASE>:${DEBUG_CXX_OPTIONS_CLANG}>")
 endif()
 
+# define dependencies
+find_package(Protobuf 3.11.0 REQUIRED)
+find_package(Nnxx 0.2.1 REQUIRED)
+
+target_link_libraries(libbasecamp_service
+    PUBLIC
+        nnxx::nnxx
+)
+
 ########################
 # installation
 ########################
@@ -112,5 +121,10 @@ install(
 include(CTest)
 add_executable(test_req_rep
     tests/test_req_rep.cpp
+)
+target_link_libraries(test_req_rep
+    PUBLIC
+        nnxx::nnxx
+        BasecampService::libbasecamp_service
 )
 add_test(NAME smoke-test COMMAND $<TARGET_FILE:test_req_rep>)
