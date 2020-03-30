@@ -67,8 +67,7 @@ find_package(Nnxx 0.2.1 REQUIRED)
 
 target_link_libraries(libbasecamp_service
     PUBLIC
-        #Protobuf
-        nnxx::nnxx
+        nnxx::libnnxx
 )
 
 ########################
@@ -130,8 +129,7 @@ add_executable(test_req_rep
 )
 target_link_libraries(test_req_rep
     PUBLIC
-        #Protobuf
-        nnxx::nnxx
+        nnxx::libnnxx
         BasecampService::libbasecamp_service
 )
 add_test(NAME smoke-test COMMAND $<TARGET_FILE:test_req_rep>)
