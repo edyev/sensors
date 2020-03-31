@@ -1,4 +1,4 @@
-DEPENDENCY_DIR=dependencies
+DEPENDENCY_DIR=extern
 
 SCHEMA_REGISTRY_NAME=schema_registry
 SCHEMA_REGISTRY_REPO=ontera/sw-team/schema_registry

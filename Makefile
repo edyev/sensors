@@ -1,5 +1,6 @@
 UNAME_S := $(shell uname -s)
 BUILDDIR = build
+DEPENDENCYDIR = extern
 PREFIX = /usr/local
 VERBOSE = 0
 BUILD_TYPE = Debug
@@ -68,29 +69,29 @@ install_dependencies:
 
 .PHONY: nanomsg
 nanomsg: ##			Install nanomsg C library
-	mkdir -p dependencies/nanomsg/build
-	cd dependencies/nanomsg/build && cmake .. -DCMAKE_INSTALL_PREFIX=$(PREFIX) -DCMAKE_MACOSX_RPATH=ON -DCMAKE_INSTALL_RPATH="$(PREFIX)/lib"
-	cd dependencies/nanomsg/build && cmake --build .
-	cd dependencies/nanomsg/build && ctest .
-	cd dependencies/nanomsg/build && $(SUDO_CMD) cmake --build . --target install
+	mkdir -p $(DEPENDENCYDIR)/nanomsg/build
+	cd $(DEPENDENCYDIR)/nanomsg/build && cmake .. -DCMAKE_INSTALL_PREFIX=$(PREFIX) -DCMAKE_MACOSX_RPATH=ON -DCMAKE_INSTALL_RPATH="$(PREFIX)/lib"
+	cd $(DEPENDENCYDIR)/nanomsg/build && cmake --build .
+	cd $(DEPENDENCYDIR)/nanomsg/build && ctest .
+	cd $(DEPENDENCYDIR)/nanomsg/build && $(SUDO_CMD) cmake --build . --target install
 ifeq ($(UNAME_S),Linux)
 	$(SUDO_CMD) ldconfig
 endif
 
 .PHONY: nanomsgxx
 nanomsgxx: ##			Install nanomsgxx C++ library
-	mkdir -p dependencies/nanomsgxx/build
-	cd dependencies/nanomsgxx/build && cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$(PREFIX) -DCMAKE_MACOSX_RPATH=ON -DCMAKE_INSTALL_RPATH="$(PREFIX)/lib"
-	$(MAKE) -C dependencies/nanomsgxx/build
-	$(MAKE) -C dependencies/nanomsgxx/build test
-	$(SUDO_CMD) $(MAKE) -C dependencies/nanomsgxx/build install
+	mkdir -p $(DEPENDENCYDIR)/nanomsgxx/build
+	cd $(DEPENDENCYDIR)/nanomsgxx/build && cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$(PREFIX) -DCMAKE_MACOSX_RPATH=ON -DCMAKE_INSTALL_RPATH="$(PREFIX)/lib"
+	$(MAKE) -C $(DEPENDENCYDIR)/nanomsgxx/build
+	$(MAKE) -C $(DEPENDENCYDIR)/nanomsgxx/build test
+	$(SUDO_CMD) $(MAKE) -C $(DEPENDENCYDIR)/nanomsgxx/build install
 ifeq ($(UNAME_S),Linux)
 	$(SUDO_CMD) ldconfig
 endif
 
 .PHONY: protobuf
 protobuf: ##			Install protobuf C++
-	cd dependencies/schema_registry && $(MAKE) install-protobuf-cpp PREFIX=$(PREFIX)
+	cd $(DEPENDENCYDIR)/schema_registry && $(MAKE) install-protobuf-cpp PREFIX=$(PREFIX)
 
 $(BUILDDIR):
 	mkdir -p build
@@ -101,11 +102,11 @@ $(BUILDDIR)/basecamp_service: $(BUILDDIR)
 
 .PHONY: update_protobufs
 update_protobufs:
-	rm -rf dependencies/schema_registry
+	rm -rf $(DEPENDENCYDIR)/schema_registry
 	$(MAKE) clone_dependencies
 	mkdir -p ./proto_files
-	cp dependencies/schema_registry/proto_files/envelope.proto ./proto_files/.
-	cp dependencies/schema_registry/proto_files/data_service.proto ./proto_files/.
+	cp $(DEPENDENCYDIR)/schema_registry/proto_files/envelope.proto ./proto_files/.
+	cp $(DEPENDENCYDIR)/schema_registry/proto_files/data_service.proto ./proto_files/.
 
 .PHONY: help
 help: ##			Show this help.
@@ -134,4 +135,4 @@ clean:
 
 .PHONY: clean_deps
 clean_deps:
-	rm -rf dependencies
+	rm -rf $(DEPENDENCYDIR)
