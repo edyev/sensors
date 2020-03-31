@@ -106,11 +106,6 @@ update_protobufs:
 	mkdir -p ./proto_files
 	cp dependencies/schema_registry/proto_files/envelope.proto ./proto_files/.
 	cp dependencies/schema_registry/proto_files/data_service.proto ./proto_files/.
-	$(MAKE) libbasecamp_service/src/momd_connection/envelope.pb.cc
-	$(MAKE) libbasecamp_service/src/data_service.pb.cc
-
-libbasecamp_service/src/%.pb.cc: $(PROTO_PATH)/%.proto
-	protoc --cpp_out=libbasecamp_service/src --proto_path=$(PROTO_PATH) $<
 
 .PHONY: help
 help: ##			Show this help.

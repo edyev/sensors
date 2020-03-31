@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.13)
 
 include(GNUInstallDirs)
 
@@ -18,11 +18,29 @@ set(RELEASE_CXX_OPTIONS_CLANG -Wweak-vtables -Wexit-time-destructors -Wglobal-co
 # Set the searching location for cmake 'include' locations
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${CMAKE_CURRENT_SOURCE_DIR}/CMake")
 
+# define dependencies
+find_package(Protobuf 3.11.0 REQUIRED)
+find_package(Nnxx 0.2.1 REQUIRED)
+
+########################
+# create protobuf
+########################
+# compile proto_files
+set(PROTO_FILES
+    proto_files/envelope.proto
+    proto_files/data_service.proto
+)
+protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS ${PROTO_FILES})
+
 ########################
 # define libbasecamp_service build
 ########################
-add_library(libbasecamp_service STATIC
-    src/req_rep.cpp
+add_library(libbasecamp_service STATIC "")
+
+target_sources(libbasecamp_service
+    PRIVATE
+        src/req_rep.cpp
+        ${PROTO_SRCS}
 )
 
 # Keep the library named as either libbasecamp_service.a or basecamp_service.lib
@@ -61,13 +79,10 @@ if ( CMAKE_CXX_COMPILER_ID MATCHES "Clang" )
     target_compile_options(libbasecamp_service PRIVATE "$<$<CONFIG:RELEASE>:${DEBUG_CXX_OPTIONS_CLANG}>")
 endif()
 
-# define dependencies
-find_package(Protobuf 3.11.0 REQUIRED)
-find_package(Nnxx 0.2.1 REQUIRED)
-
 target_link_libraries(libbasecamp_service
     PUBLIC
-        nnxx::libnnxx
+        protobuf::libprotobuf
+        nnxx::nnxx
 )
 
 ########################
@@ -129,7 +144,8 @@ add_executable(test_req_rep
 )
 target_link_libraries(test_req_rep
     PUBLIC
-        nnxx::libnnxx
+        protobuf::libprotobuf
+        nnxx::nnxx
         BasecampService::libbasecamp_service
 )
 add_test(NAME smoke-test COMMAND $<TARGET_FILE:test_req_rep>)
