@@ -33,6 +33,7 @@ _bootstrap:
 	# add kitware repo to get newer cmake
 	$(SUDO_CMD) apt-get update
 	$(SUDO_CMD) apt-get -y -q install --no-install-recommends \
+	    ca-certificates \
 	    wget \
         gnupg
 	wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc
@@ -49,9 +50,7 @@ _bootstrap:
 	    libtool \
 	    curl \
 	    g++ \
-	    ca-certificates \
-	    unzip \
-	    wget;
+	    unzip;
 else ifeq ($(UNAME_S),Darwin)
 _bootstrap:
 	@if [ -x /opt/local/bin/port ]; then \
