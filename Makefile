@@ -144,7 +144,8 @@ test:
 
 .PHONY: clean
 clean:
-	rm -rf $(PROTO_FILES) $(BUILDDIR)
+	rm -rf $(PROTO_FILES)
+	cd $(BUILDDIR) && make clean
 
 .PHONY: clean_deps
 clean_deps:
