@@ -31,6 +31,10 @@ bootstrap:
 ifeq ($(UNAME_S),Linux)
 _bootstrap:
 	# add kitware repo to get newer cmake
+	$(SUDO_CMD) apt-get update
+	$(SUDO_CMD) apt-get -y -q install --no-install-recommends \
+	    wget \
+        gnupg
 	wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | $(SUDO_CMD) apt-key add -
 	$(SUDO_CMD) apt-add-repository 'deb https://apt.kitware.com/ubuntu/ bionic main'
 	$(SUDO_CMD) apt-get update

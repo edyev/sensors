@@ -10,8 +10,7 @@ ARG GITLAB_TOKEN
 # install dependencies
 RUN apt-get update
 RUN apt-get -y -q install --no-install-recommends \
-    make \
-    wget
+    make
 RUN mkdir -p $REPO_DIR
 COPY clone_dependencies.sh $REPO_DIR
 COPY Makefile $REPO_DIR
