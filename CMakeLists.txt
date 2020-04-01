@@ -10,8 +10,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 # define compiler flags for different build modes
-set(DEBUG_CXX_OPTIONS -Wall -Wextra -Wunreachable-code -Wpedantic)
-set(DEBUG_CXX_OPTIONS_CLANG -Wweak-vtables -Wexit-time-destructors -Wglobal-constructors -Wmissing-noreturn)
+set(DEBUG_CXX_OPTIONS -g -O0 -Wall -Wextra -Wunreachable-code -Wpedantic)
+set(DEBUG_CXX_OPTIONS_CLANG -g -O0 -Wweak-vtables -Wexit-time-destructors -Wglobal-constructors -Wmissing-noreturn)
 set(RELEASE_CXX_OPTIONS -Wall -Wextra -Wunreachable-code -Wpedantic)
 set(RELEASE_CXX_OPTIONS_CLANG -Wweak-vtables -Wexit-time-destructors -Wglobal-constructors -Wmissing-noreturn)
 
@@ -93,7 +93,6 @@ foreach(PROTO_HDR ${PROTO_HDRS})
         PUBLIC
             $<BUILD_INTERFACE:${PROTO_HDR_PATH}>
     )
-    message(STATUS "PROTO_HDR_PATH: ${PROTO_HDR_PATH}")
 endforeach()
 
 target_compile_definitions(libbasecamp_service PUBLIC __STDC_LIMIT_MACROS __STDC_FORMAT_MACROS)
@@ -170,8 +169,6 @@ install(
 ########################
 # define test executables
 ########################
-
-
 add_executable(run_tests "")
 target_sources(run_tests
     PRIVATE
@@ -186,3 +183,12 @@ target_link_libraries(run_tests
         gtest
 )
 add_test(NAME run_tests COMMAND $<TARGET_FILE:run_tests>)
+
+include(CodeCoverage)
+setup_target_for_coverage(
+    coverage_run_tests      # Name for custom target.
+    run_tests               # Name of the test driver executable that runs the tests.
+    # NOTE! This should always have a ZERO as exit code
+    # otherwise the coverage generation will not complete.
+    coverage_run_tests_dir  # Name of output directory.
+)
