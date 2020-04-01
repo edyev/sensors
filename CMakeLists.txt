@@ -41,6 +41,7 @@ target_sources(libbasecamp_service
     PRIVATE
         src/req_rep.cpp
         ${PROTO_SRCS}
+        ${PROTO_HDRS}
 )
 
 # Keep the library named as either libbasecamp_service.a or basecamp_service.lib
@@ -53,7 +54,6 @@ set_target_properties(libbasecamp_service PROPERTIES
 # This is useful to abstract over use of the library as installed vs subdirectory build
 add_library(BasecampService::libbasecamp_service ALIAS libbasecamp_service)
 
-source_group("Source Files" FILES src/req_rep.cpp)
 target_compile_features(libbasecamp_service PUBLIC
     cxx_attributes
     cxx_defaulted_functions
@@ -62,11 +62,22 @@ target_compile_features(libbasecamp_service PUBLIC
 )
 target_include_directories(libbasecamp_service
     PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/basecamp_service>
     PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/src
+        ${CMAKE_SOURCE_DIR}/src
 )
+
+# add protobuf header path(s)
+foreach(PROTO_HDR ${PROTO_HDRS})
+    get_filename_component(PROTO_HDR_PATH ${PROTO_HDR} DIRECTORY)
+    target_include_directories(libbasecamp_service
+        PUBLIC
+            $<BUILD_INTERFACE:${PROTO_HDR_PATH}>
+    )
+    message(STATUS "PROTO_HDR_PATH: ${PROTO_HDR_PATH}")
+endforeach()
+
 target_compile_definitions(libbasecamp_service PUBLIC __STDC_LIMIT_MACROS __STDC_FORMAT_MACROS)
 
 # set compiler/linker options (e.g. warning levels) for various platforms
@@ -104,6 +115,9 @@ install(DIRECTORY basecamp_service/include
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/basecamp_service
     FILES_MATCHING PATTERN "*.h*"
 )
+install(FILES ${PROTO_HDRS}
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/basecamp_service
+)
 
 install(EXPORT BasecampServiceTargets
     FILE BasecampServiceTargets.cmake
@@ -138,7 +152,8 @@ install(
 ########################
 # define test executables
 ########################
-include(CTest)
+
+
 add_executable(test_req_rep
     tests/test_req_rep.cpp
 )

@@ -5,8 +5,8 @@ PREFIX = /usr/local
 VERBOSE = 0
 BUILD_TYPE = Debug
 
-PROTO_PATH := ./proto_files
-PROTO_FILES := data_service.proto envelope.proto
+PROTO_PATH := proto_files
+PROTO_FILES := $(PROTO_PATH)/data_service.proto $(PROTO_PATH)/envelope.proto
 PROTO_CC_FILES := $(PROTO_FILES:.proto=.pb.cc)
 
 override SHELL = /bin/bash
@@ -104,9 +104,9 @@ $(BUILDDIR)/basecamp_service: $(BUILDDIR)
 update_protobufs:
 	rm -rf $(DEPENDENCYDIR)/schema_registry
 	$(MAKE) clone_dependencies
-	mkdir -p ./proto_files
-	cp $(DEPENDENCYDIR)/schema_registry/proto_files/envelope.proto ./proto_files/.
-	cp $(DEPENDENCYDIR)/schema_registry/proto_files/data_service.proto ./proto_files/.
+	mkdir -p $(PROTO_PATH)
+	cp $(DEPENDENCYDIR)/schema_registry/proto_files/envelope.proto ./$(PROTO_PATH)/.
+	cp $(DEPENDENCYDIR)/schema_registry/proto_files/data_service.proto ./$(PROTO_PATH)/.
 
 .PHONY: help
 help: ##			Show this help.
@@ -131,7 +131,7 @@ test:
 
 .PHONY: clean
 clean:
-	rm -rf $(PROTO_PY_FILES) $(BUILDDIR)
+	rm -rf $(PROTO_FILES) $(BUILDDIR)
 
 .PHONY: clean_deps
 clean_deps:
