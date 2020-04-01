@@ -1,10 +1,7 @@
-#include <iostream>
-#include <nnxx/message.h>
-#include <nnxx/pair.h>
-#include <nnxx/socket.h>
-#include "basecamp_service.hpp"
+#include "req_rep.hpp"
+#include "gtest/gtest.h"
 
-int main(int argc, char *argv[])
+std::string nanomsg_sample(std::string input_str)
 {
     std::cout << "Running test..." << std::endl;
 
@@ -17,15 +14,31 @@ int main(int argc, char *argv[])
         s1.bind(addr);
         s2.connect(addr);
 
-        s1.send("Hello World!");
+        s1.send(input_str);
 
         nnxx::message msg = s2.recv();
         std::cout << msg << std::endl;
-        return 0;
+
+        return nnxx::to_string(msg);
     }
     catch (const std::system_error &e)
     {
         std::cerr << e.what() << std::endl;
-        return 1;
+        return nullptr;
     }
 }
+
+namespace
+{
+TEST(NanomsgTest, BasicSample)
+{
+    std::string input_string = "Hello World!";
+    std::string output_string = nanomsg_sample(input_string);
+
+    std::cout << "Input string: " << input_string << std::endl;
+    std::cout << "Output string: " << output_string << std::endl;
+
+    //EXPECT_STREQ(output_string, input_string);
+}
+
+} // namespace

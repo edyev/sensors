@@ -130,7 +130,8 @@ docker_interactive: ##		Download and run CI docker image interactively
 
 .PHONY: test
 test:
-	make -C $(BUILDDIR) test
+	$(MAKE)
+	$(BUILDDIR)/run_tests
 
 .PHONY: clean
 clean:

@@ -172,13 +172,17 @@ install(
 ########################
 
 
-add_executable(test_req_rep
-    tests/test_req_rep.cpp
+add_executable(run_tests "")
+target_sources(run_tests
+    PRIVATE
+        tests/main.cpp
+        tests/test_req_rep.cpp
 )
-target_link_libraries(test_req_rep
+target_link_libraries(run_tests
     PUBLIC
         protobuf::libprotobuf
         nnxx::nnxx
         BasecampService::libbasecamp_service
+        gtest
 )
-add_test(NAME smoke-test COMMAND $<TARGET_FILE:test_req_rep>)
+add_test(NAME run_tests COMMAND $<TARGET_FILE:run_tests>)
