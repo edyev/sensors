@@ -18,6 +18,24 @@ set(RELEASE_CXX_OPTIONS_CLANG -Wweak-vtables -Wexit-time-destructors -Wglobal-co
 # Set the searching location for cmake 'include' locations
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${CMAKE_CURRENT_SOURCE_DIR}/CMake")
 
+########################
+# fetch dependencies
+########################
+include(FetchContent)
+
+# google test
+FetchContent_Declare(
+  googletest
+  GIT_REPOSITORY https://github.com/google/googletest.git
+  GIT_TAG        release-1.10.0
+)
+
+FetchContent_GetProperties(googletest)
+if(NOT googletest_POPULATED)
+  FetchContent_Populate(googletest)
+  add_subdirectory(${googletest_SOURCE_DIR} ${googletest_BINARY_DIR})
+endif()
+
 # define dependencies
 find_package(Protobuf 3.11.0 REQUIRED)
 find_package(Nnxx 0.2.1 REQUIRED)
