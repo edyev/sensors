@@ -51,14 +51,12 @@ build_basecamp_service:
     - make
   artifacts:
     paths:
+      - extern
       - build
 
 test_basecamp_service:
   stage: test
   script:
     - make coverage
-  artifacts:
-    paths:
-      - build
   dependencies:
     - build_basecamp_service
