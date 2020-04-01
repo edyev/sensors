@@ -35,7 +35,8 @@ _bootstrap:
 	$(SUDO_CMD) apt-get -y -q install --no-install-recommends \
 	    ca-certificates \
 	    wget \
-        gnupg
+        gnupg \
+	    software-properties-common
 	wget -qO kitware-archive-latest.asc https://apt.kitware.com/keys/kitware-archive-latest.asc
 	$(SUDO_CMD) apt-key add kitware-archive-latest.asc
 	$(SUDO_CMD) apt-add-repository 'deb https://apt.kitware.com/ubuntu/ bionic main'
