@@ -104,17 +104,21 @@ protobuf: ##			Install protobuf C++
 $(BUILDDIR):
 	mkdir -p build
 
-$(BUILDDIR)/basecamp_service: $(BUILDDIR)
+$(BUILDDIR)/basecamp_service: $(BUILDDIR) $(PROTO_FILES)
 	cd $(BUILDDIR) && cmake -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) ..
 	make -C $(BUILDDIR) VERBOSE=$(VERBOSE)
+
+ $(DEPENDENCYDIR)/schema_registry:
+	$(MAKE) clone_dependencies
+
+$(PROTO_FILES):  $(DEPENDENCYDIR)/schema_registry
+	mkdir -p $(PROTO_PATH)
+	cp $(DEPENDENCYDIR)/schema_registry/$@ ./$(PROTO_PATH)/.
 
 .PHONY: update_protobufs
 update_protobufs:
 	rm -rf $(DEPENDENCYDIR)/schema_registry
-	$(MAKE) clone_dependencies
-	mkdir -p $(PROTO_PATH)
-	cp $(DEPENDENCYDIR)/schema_registry/proto_files/envelope.proto ./$(PROTO_PATH)/.
-	cp $(DEPENDENCYDIR)/schema_registry/proto_files/data_service.proto ./$(PROTO_PATH)/.
+	$(MAKE) $(PROTO_FILES)
 
 .PHONY: help
 help: ##			Show this help.
