@@ -2,7 +2,7 @@ DEPENDENCY_DIR=extern
 
 SCHEMA_REGISTRY_NAME=schema_registry
 SCHEMA_REGISTRY_REPO=ontera/sw-team/schema_registry
-SCHEMA_REGISTRY_VER=0.3.0
+SCHEMA_REGISTRY_VER=0.3.1
 
 NANOMSG_NAME=nanomsg
 NANOMSG_REPO=nanomsg/nanomsg
