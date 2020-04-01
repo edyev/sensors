@@ -36,7 +36,7 @@ _bootstrap:
 	    ca-certificates \
 	    wget \
         gnupg
-	wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc
+	wget -qO kitware-archive-latest.asc https://apt.kitware.com/keys/kitware-archive-latest.asc
 	$(SUDO_CMD) apt-key add kitware-archive-latest.asc
 	$(SUDO_CMD) apt-add-repository 'deb https://apt.kitware.com/ubuntu/ bionic main'
 	$(SUDO_CMD) apt-get update
