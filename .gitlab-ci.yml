@@ -57,6 +57,7 @@ build_basecamp_service:
 test_basecamp_service:
   stage: test
   script:
+    - make update_protobufs
     - make coverage
   dependencies:
     - build_basecamp_service
