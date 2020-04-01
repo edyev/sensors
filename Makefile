@@ -51,6 +51,7 @@ _bootstrap:
 	    libtool \
 	    curl \
 	    g++ \
+		lcov \
 	    unzip;
 else ifeq ($(UNAME_S),Darwin)
 _bootstrap:
