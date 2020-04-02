@@ -1,11 +1,12 @@
 UNAME_S := $(shell uname -s)
 BUILDDIR = build
+DEPENDENCYDIR = extern
 PREFIX = /usr/local
 VERBOSE = 0
 BUILD_TYPE = Debug
 
-PROTO_PATH := ./proto_files
-PROTO_FILES := data_service.proto envelope.proto
+PROTO_PATH := proto_files
+PROTO_FILES := $(PROTO_PATH)/data_service.proto $(PROTO_PATH)/envelope.proto
 PROTO_CC_FILES := $(PROTO_FILES:.proto=.pb.cc)
 
 override SHELL = /bin/bash
@@ -29,19 +30,29 @@ bootstrap:
 
 ifeq ($(UNAME_S),Linux)
 _bootstrap:
+	# add kitware repo to get newer cmake
+	$(SUDO_CMD) apt-get update
+	$(SUDO_CMD) apt-get -y -q install --no-install-recommends \
+	    ca-certificates \
+	    wget \
+        gnupg \
+	    software-properties-common
+	wget -qO kitware-archive-latest.asc https://apt.kitware.com/keys/kitware-archive-latest.asc
+	$(SUDO_CMD) apt-key add kitware-archive-latest.asc
+	$(SUDO_CMD) apt-add-repository 'deb https://apt.kitware.com/ubuntu/ bionic main'
 	$(SUDO_CMD) apt-get update
 	$(SUDO_CMD) apt-get -y -q install --no-install-recommends \
 	    git \
 	    make \
 	    cmake \
+	    pkg-config \
 	    autoconf \
 	    automake \
 	    libtool \
 	    curl \
 	    g++ \
-	    ca-certificates \
-	    unzip \
-	    wget;
+		lcov \
+	    unzip;
 else ifeq ($(UNAME_S),Darwin)
 _bootstrap:
 	@if [ -x /opt/local/bin/port ]; then \
@@ -63,41 +74,52 @@ clone_dependencies:
 install_dependencies:
 	$(MAKE) protobuf
 	$(MAKE) nanomsg
+	$(MAKE) nanomsgxx
 
 .PHONY: nanomsg
 nanomsg: ##			Install nanomsg C library
-	mkdir -p dependencies/nanomsg/build
-	cd dependencies/nanomsg/build && cmake .. -DCMAKE_INSTALL_PREFIX=$(PREFIX) -DCMAKE_MACOSX_RPATH=ON -DCMAKE_INSTALL_RPATH="$(PREFIX)/lib"
-	cd dependencies/nanomsg/build && cmake --build .
-	cd dependencies/nanomsg/build && ctest .
-	cd dependencies/nanomsg/build && cmake --build . --target install
+	mkdir -p $(DEPENDENCYDIR)/nanomsg/build
+	cd $(DEPENDENCYDIR)/nanomsg/build && cmake .. -DCMAKE_INSTALL_PREFIX=$(PREFIX) -DCMAKE_MACOSX_RPATH=ON -DCMAKE_INSTALL_RPATH="$(PREFIX)/lib"
+	cd $(DEPENDENCYDIR)/nanomsg/build && cmake --build .
+	cd $(DEPENDENCYDIR)/nanomsg/build && ctest .
+	cd $(DEPENDENCYDIR)/nanomsg/build && $(SUDO_CMD) cmake --build . --target install
+ifeq ($(UNAME_S),Linux)
+	$(SUDO_CMD) ldconfig
+endif
+
+.PHONY: nanomsgxx
+nanomsgxx: ##			Install nanomsgxx C++ library
+	mkdir -p $(DEPENDENCYDIR)/nanomsgxx/build
+	cd $(DEPENDENCYDIR)/nanomsgxx/build && cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$(PREFIX) -DCMAKE_MACOSX_RPATH=ON -DCMAKE_INSTALL_RPATH="$(PREFIX)/lib"
+	$(MAKE) -C $(DEPENDENCYDIR)/nanomsgxx/build
+	$(MAKE) -C $(DEPENDENCYDIR)/nanomsgxx/build test
+	$(SUDO_CMD) $(MAKE) -C $(DEPENDENCYDIR)/nanomsgxx/build install
 ifeq ($(UNAME_S),Linux)
 	$(SUDO_CMD) ldconfig
 endif
 
 .PHONY: protobuf
 protobuf: ##			Install protobuf C++
-	cd dependencies/schema_registry && $(MAKE) install-protobuf-cpp PREFIX=$(PREFIX)
+	cd $(DEPENDENCYDIR)/schema_registry && $(MAKE) install-protobuf-cpp PREFIX=$(PREFIX)
 
 $(BUILDDIR):
 	mkdir -p build
 
-$(BUILDDIR)/basecamp_service: $(BUILDDIR)
-	cd $(BUILDDIR) && cmake -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) ../libbasecamp_service
+$(BUILDDIR)/basecamp_service: $(BUILDDIR) $(PROTO_FILES)
+	cd $(BUILDDIR) && cmake -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) ..
 	make -C $(BUILDDIR) VERBOSE=$(VERBOSE)
+
+ $(DEPENDENCYDIR)/schema_registry:
+	$(MAKE) clone_dependencies
+
+$(PROTO_FILES):  $(DEPENDENCYDIR)/schema_registry
+	mkdir -p $(PROTO_PATH)
+	cp $(DEPENDENCYDIR)/schema_registry/$@ ./$(PROTO_PATH)/.
 
 .PHONY: update_protobufs
 update_protobufs:
-	rm -rf dependencies/schema_registry
-	$(MAKE) clone_dependencies
-	mkdir -p ./proto_files
-	cp dependencies/schema_registry/proto_files/envelope.proto ./proto_files/.
-	cp dependencies/schema_registry/proto_files/data_service.proto ./proto_files/.
-	$(MAKE) libbasecamp_service/src/momd_connection/envelope.pb.cc
-	$(MAKE) libbasecamp_service/src/data_service.pb.cc
-
-libbasecamp_service/src/%.pb.cc: $(PROTO_PATH)/%.proto
-	protoc --cpp_out=libbasecamp_service/src --proto_path=$(PROTO_PATH) $<
+	rm -rf $(DEPENDENCYDIR)/schema_registry
+	$(MAKE) $(PROTO_FILES)
 
 .PHONY: help
 help: ##			Show this help.
@@ -118,12 +140,17 @@ docker_interactive: ##		Download and run CI docker image interactively
 
 .PHONY: test
 test:
-	make -C $(BUILDDIR) test
+	$(BUILDDIR)/run_tests
+
+.PHONY: coverage
+coverage:
+	cd $(BUILDDIR) && make coverage_run_tests
 
 .PHONY: clean
 clean:
-	rm -rf $(PROTO_PY_FILES) $(BUILDDIR)
+	rm -rf $(PROTO_FILES)
+	cd $(BUILDDIR) && make clean
 
 .PHONY: clean_deps
 clean_deps:
-	rm -rf dependencies
+	rm -rf $(DEPENDENCYDIR)

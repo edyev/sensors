@@ -48,6 +48,7 @@ build_docker:
 build_basecamp_service:
   stage: build
   script:
+    - make update_protobufs
     - make
   artifacts:
     paths:
@@ -56,9 +57,7 @@ build_basecamp_service:
 test_basecamp_service:
   stage: test
   script:
-    - make test
-  artifacts:
-    paths:
-      - build
+    - make update_protobufs
+    - make coverage
   dependencies:
     - build_basecamp_service
