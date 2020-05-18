@@ -72,7 +72,7 @@ clone_dependencies: ##	Clone dependent library source
 .PHONY: install_dependencies
 install_dependencies: ##		Install dependent libraries (protobuf, nanomsg, nanomsgxx)
 	$(MAKE) clone_dependencies
-	#$(MAKE) protobuf
+	$(MAKE) protobuf
 	$(MAKE) nanomsg
 	$(MAKE) nanomsgxx
 
