@@ -23,7 +23,7 @@ Create a server application that tracks sensor values submitted by one or more d
 The deliverable for this task is a branch with changes made to fulfill the challenge requirements. You will then submit a merge request of your branch into `master` branch. Please expand the README to describe the program's use as well as some how to build and run the server/client applications to verify it’s functionality.
 
 ## Provided code
-The build system, nanomsg, protobufs dependencies are setup in the existing repo. A `libsensorservice` has been 
+The build system, nanomsg, protobufs dependencies are setup in the existing repo. A `libsensor_service` has been stubbed as a central location to put code common to `client` and `server`.
 
 # Requirements
 You will be expected to add to the existing code and build:
@@ -47,3 +47,17 @@ You will be expected to add to the existing code and build:
 * Perform unit testing using a test framework such as Google Test
 * Track signal “status” using boolean thresholding (i.e. have an signal exhibit an error condition if it’s value surpasses a configured level)
 
+# Building
+
+## Bootstrap system
+Required development tools and dependent libraries can be installed by running:
+```
+make bootstrap
+make install_dependencies
+```
+
+## Build libraries and services
+To build the `client` and `server` applications (along with `run_tests` executable), run:
+```
+make
+```

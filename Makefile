@@ -19,7 +19,6 @@ endif
 
 .PHONY: all
 all:
-	$(MAKE) clone_dependencies
 	$(MAKE) $(BUILDDIR)/sensor_service
 
 .PHONY: bootstrap
