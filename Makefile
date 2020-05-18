@@ -70,7 +70,7 @@ clone_dependencies: ##	Clone dependent library source
 	./clone_dependencies.sh
 
 .PHONY: install_dependencies
-install_dependencies: ##		Install dependent libraries (protobuf, nanomsg, nanomsgxx)
+install_dependencies: ##	Install dependent libraries (protobuf, nanomsg, nanomsgxx)
 	$(MAKE) clone_dependencies
 	$(MAKE) protobuf
 	$(MAKE) nanomsg
@@ -88,7 +88,7 @@ ifeq ($(UNAME_S),Linux)
 endif
 
 .PHONY: nanomsgxx
-nanomsgxx: ##			Install nanomsgxx C++ library
+nanomsgxx: ##		Install nanomsgxx C++ library
 	mkdir -p $(DEPENDENCYDIR)/nanomsgxx/build
 	cd $(DEPENDENCYDIR)/nanomsgxx/build && cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$(PREFIX) -DCMAKE_MACOSX_RPATH=ON -DCMAKE_INSTALL_RPATH="$(PREFIX)/lib"
 	$(MAKE) -C $(DEPENDENCYDIR)/nanomsgxx/build
@@ -99,7 +99,7 @@ ifeq ($(UNAME_S),Linux)
 endif
 
 .PHONY: protobuf
-protobuf: ##			Install protobuf C++
+protobuf: ##		Install protobuf C++
 	mkdir -p build
 	cd ./build && wget -O protobuf-all-$(PROTO_BUF_VER).tar.gz https://github.com/protocolbuffers/protobuf/releases/download/v$(PROTO_BUF_VER)/protobuf-all-$(PROTO_BUF_VER).tar.gz
 	cd ./build && tar -xvzf protobuf-all-$(PROTO_BUF_VER).tar.gz
@@ -128,7 +128,7 @@ test: ##			Run GoogleTest harness
 	$(BUILDDIR)/run_tests
 
 .PHONY: coverage
-coverage: ##			Run tests and calculate code coverage
+coverage: ##		Run tests and calculate code coverage
 	cd $(BUILDDIR) && make coverage_run_tests
 
 .PHONY: clean
