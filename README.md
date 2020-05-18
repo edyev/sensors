@@ -20,7 +20,7 @@ Create a server application that tracks sensor values submitted by one or more d
 ```
 
 # Expected deliverable
-The deliverable for this task is a git repo (e.g. on Github or Gitlab) that is forked from the `service_challenge` repo (this repo) with sufficient documentation in a README to build and run the server/client applications to verify it’s functionality.
+The deliverable for this task is a branch with changes made to fulfill the challenge requirements. You will then submit a merge request of your branch into `master` branch. Please expand the README to describe the program's use as well as some how to build and run the server/client applications to verify it’s functionality.
 
 ## Provided code
 The build system, nanomsg, protobufs dependencies are setup in the existing repo. A `libsensorservice` has been 
