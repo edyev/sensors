@@ -4,7 +4,7 @@ LABEL maintainer=" Noah Wilson <noah.wilson@ontera.bio>"
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV DEBCONF_NONINTERACTIVE_SEEN true
-ENV REPO_DIR /builds/ontera/sw-team/flintstones/basecamp_service
+ENV REPO_DIR /builds/ontera/sw-team/service_challenge
 ARG GITLAB_TOKEN
 
 # install dependencies

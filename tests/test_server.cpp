@@ -1,4 +1,7 @@
-#include "req_rep.hpp"
+#include <nnxx/message.h>
+#include <nnxx/pair.h>
+#include <nnxx/socket.h>
+#include "server.hpp"
 #include "gtest/gtest.h"
 
 std::string nanomsg_sample(std::string input_str)
@@ -38,7 +41,7 @@ TEST(NanomsgTest, BasicSample)
     std::cout << "Input string: " << input_string << std::endl;
     std::cout << "Output string: " << output_string << std::endl;
 
-    //EXPECT_STREQ(output_string, input_string);
+    EXPECT_EQ(output_string, input_string);
 }
 
 } // namespace

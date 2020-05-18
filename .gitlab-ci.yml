@@ -1,4 +1,4 @@
-image: registry.gitlab.com/ontera/sw-team/flintstones/basecamp_service:latest
+image: registry.gitlab.com/ontera/sw-team/service_challenge:latest
 
 variables:
   # When using dind service, we need to instruct docker, to talk with
@@ -37,15 +37,15 @@ build_docker:
   stage: docker
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker build -t registry.gitlab.com/ontera/sw-team/flintstones/basecamp_service . --build-arg GITLAB_TOKEN=$GITLAB_TOKEN
-    - docker push registry.gitlab.com/ontera/sw-team/flintstones/basecamp_service
+    - docker build -t registry.gitlab.com/ontera/sw-team/service_challenge . --build-arg GITLAB_TOKEN=$GITLAB_TOKEN
+    - docker push registry.gitlab.com/ontera/sw-team/service_challenge
   only:
     changes:
       - Dockerfile
       - Makefile
       - clone_dependencies.sh
 
-build_basecamp_service:
+build_sensor_service:
   stage: build
   script:
     - make update_protobufs
@@ -54,10 +54,10 @@ build_basecamp_service:
     paths:
       - build
 
-test_basecamp_service:
+test_sensor_service:
   stage: test
   script:
     - make update_protobufs
     - make coverage
   dependencies:
-    - build_basecamp_service
+    - build_sensor_service

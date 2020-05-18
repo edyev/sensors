@@ -5,9 +5,7 @@ PREFIX = /usr/local
 VERBOSE = 0
 BUILD_TYPE = Debug
 
-PROTO_PATH := proto_files
-PROTO_FILES := $(PROTO_PATH)/data_service.proto $(PROTO_PATH)/envelope.proto
-PROTO_CC_FILES := $(PROTO_FILES:.proto=.pb.cc)
+PROTO_BUF_VER = 3.11.0
 
 override SHELL = /bin/bash
 
@@ -22,10 +20,10 @@ endif
 .PHONY: all
 all:
 	$(MAKE) clone_dependencies
-	$(MAKE) $(BUILDDIR)/basecamp_service
+	$(MAKE) $(BUILDDIR)/sensor_service
 
 .PHONY: bootstrap
-bootstrap:
+bootstrap: ##		Install development 
 	$(MAKE) _bootstrap
 
 ifeq ($(UNAME_S),Linux)
@@ -53,6 +51,7 @@ _bootstrap:
 	    g++ \
 		lcov \
 	    unzip;
+	$(SUDO_CMD) rm -f kitware-archive-latest.asc
 else ifeq ($(UNAME_S),Darwin)
 _bootstrap:
 	@if [ -x /opt/local/bin/port ]; then \
@@ -67,12 +66,13 @@ _bootstrap:
 endif
 
 .PHONY: clone_dependencies
-clone_dependencies:
+clone_dependencies: ##	Clone dependent library source
 	./clone_dependencies.sh
 
 .PHONY: install_dependencies
-install_dependencies:
-	$(MAKE) protobuf
+install_dependencies: ##		Install dependent libraries (protobuf, nanomsg, nanomsgxx)
+	$(MAKE) clone_dependencies
+	#$(MAKE) protobuf
 	$(MAKE) nanomsg
 	$(MAKE) nanomsgxx
 
@@ -100,57 +100,41 @@ endif
 
 .PHONY: protobuf
 protobuf: ##			Install protobuf C++
-	cd $(DEPENDENCYDIR)/schema_registry && $(MAKE) install-protobuf-cpp PREFIX=$(PREFIX)
+	mkdir -p build
+	cd ./build && wget -O protobuf-all-$(PROTO_BUF_VER).tar.gz https://github.com/protocolbuffers/protobuf/releases/download/v$(PROTO_BUF_VER)/protobuf-all-$(PROTO_BUF_VER).tar.gz
+	cd ./build && tar -xvzf protobuf-all-$(PROTO_BUF_VER).tar.gz
+	cd ./build/protobuf-$(PROTO_BUF_VER) && ./configure --prefix=$(PREFIX)
+	cd ./build/protobuf-$(PROTO_BUF_VER) && $(MAKE)
+	cd ./build/protobuf-$(PROTO_BUF_VER) && $(MAKE) check
+	cd ./build/protobuf-$(PROTO_BUF_VER) && $(SUDO_CMD) $(MAKE) install
+ifeq ($(UNAME_S),Linux)
+	cd ./build/protobuf-$(PROTO_BUF_VER) && $(SUDO_CMD) ldconfig
+endif
 
 $(BUILDDIR):
 	mkdir -p build
 
-$(BUILDDIR)/basecamp_service: $(BUILDDIR) $(PROTO_FILES)
+$(BUILDDIR)/sensor_service: $(BUILDDIR)
 	cd $(BUILDDIR) && cmake -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) ..
 	make -C $(BUILDDIR) VERBOSE=$(VERBOSE)
 
- $(DEPENDENCYDIR)/schema_registry:
-	$(MAKE) clone_dependencies
-
-$(PROTO_FILES):  $(DEPENDENCYDIR)/schema_registry
-	mkdir -p $(PROTO_PATH)
-	cp $(DEPENDENCYDIR)/schema_registry/$@ ./$(PROTO_PATH)/.
-
-.PHONY: update_protobufs
-update_protobufs:
-	rm -rf $(DEPENDENCYDIR)/schema_registry
-	$(MAKE) $(PROTO_FILES)
-
 .PHONY: help
 help: ##			Show this help.
-	@echo "Welcome to basecamp_service! Please use \`make <target>\` where <target> is one of the following:"
+	@echo "Welcome to sensor_service! Please use \`make <target>\` where <target> is one of the following:"
 	@fgrep -h "##" Makefile | fgrep -v fgrep | sed -e 's/:[[:space:]]*##//'
 
-.PHONY: docker
-docker: ##		Build and upload CI docker image
-	echo "$(GITLAB_API_TOKEN)" | docker login registry.gitlab.com/ontera/sw-team/flintstones/basecamp_service --username gitlab-ci-token --password-stdin
-	docker build -t registry.gitlab.com/ontera/sw-team/flintstones/basecamp_service . --build-arg GITLAB_TOKEN=$(GITLAB_TOKEN)
-	docker push registry.gitlab.com/ontera/sw-team/flintstones/basecamp_service
-
-.PHONY: docker_interactive 
-docker_interactive: ##		Download and run CI docker image interactively
-	echo "$(GITLAB_API_TOKEN)" | docker login registry.gitlab.com/ontera/sw-team/flintstones/basecamp_service:latest --username gitlab-ci-token --password-stdin
-	docker pull registry.gitlab.com/ontera/sw-team/flintstones/basecamp_service
-	docker run -it -v `pwd`:/builds/ontera/sw-team/flintstones/basecamp_service registry.gitlab.com/ontera/sw-team/flintstones/basecamp_service:latest bash
-
 .PHONY: test
-test:
+test: ##			Run GoogleTest harness
 	$(BUILDDIR)/run_tests
 
 .PHONY: coverage
-coverage:
+coverage: ##			Run tests and calculate code coverage
 	cd $(BUILDDIR) && make coverage_run_tests
 
 .PHONY: clean
-clean:
-	rm -rf $(PROTO_FILES)
+clean: ##			Clean build products
 	cd $(BUILDDIR) && make clean
 
 .PHONY: clean_deps
-clean_deps:
+clean_deps: ##		Clean dependency build products
 	rm -rf $(DEPENDENCYDIR)

@@ -6,5 +6,4 @@
 
 # Distribution/packaging
 build/
-dependencies/
-proto_files/
+extern/
