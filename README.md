@@ -8,14 +8,14 @@ Create a server application that tracks sensor values submitted by one or more d
     participant ClientSensor2
     participant ClientQuery
 
-    ClientSensor1 ->> Server: SensorValue
-    ClientSensor1 ->> Server: SensorValue
-    ClientSensor2 ->> Server: SensorValue
-    ClientSensor2 ->> Server: SensorValue
-    ClientSensor1 ->> Server: SensorValue
-    ClientSensor2 ->> Server: SensorValue
+    ClientSensor1 -->> Server: SensorValue
+    ClientSensor1 -->> Server: SensorValue
+    ClientSensor2 -->> Server: SensorValue
+    ClientSensor2 -->> Server: SensorValue
+    ClientSensor1 -->> Server: SensorValue
+    ClientSensor2 -->> Server: SensorValue
 
-    ClientQuery ->> Server: SensorDataRequest
+    ClientQuery -->> Server: SensorDataRequest
     Server ->> ClientQuery: SensorDataResponse
 ```
 
