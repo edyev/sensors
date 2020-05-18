@@ -2,11 +2,39 @@
 Create a server application that tracks sensor values submitted by one or more different client applications running on the same machine. A client can subsequently request previous values by signal name for a given sensor. Server and client are expected to be run under an embedded Linux environment with constrained resources, so care should be taken to be conservative of algorithms/libraries used. For this task, a test build running under macOS is also acceptable.
 
 ```mermaid
-graph TD;
-    Server<--SensorA;
-    Server<--SensorB;
-    Server<--SensorC;
-    QueryClient<--Server;
+  sequenceDiagram
+    participant Frontend
+    participant Backend (REQ)
+    participant Backend (RAW_DATA)
+    participant Backend (EVENT_DATA)
+    participant Backend (PORE_STATS)
+    participant momd
+
+    Note left of momd: Start pore eval.<br/> in momd
+    Note right of Frontend: Envelope.type <br/> DATA_TASK_SUBMIT_REQUEST
+    Frontend -->> Backend (REQ): DataTaskSubmitRequest
+    Backend (REQ) -->>+ momd: Submit `dataset` task
+
+    momd ->> Backend (REQ): task status (i.e. UUID, etc.)
+    Note left of Backend (REQ): Envelope.type <br/> DATA_TASK_STATUS_RESPONSE
+    Backend (REQ) ->> Frontend: DataTaskStatusResponse
+
+    loop Wait for task to finish
+        Note right of Frontend: Envelope.type <br/> DATA_TASK_STATUS_REQUEST
+        Frontend -->> Backend (REQ): DataTaskStatusRequest
+        Backend (REQ) -->> momd: Get task status
+        momd ->>- Backend (REQ): Return task status
+        Note left of Backend (REQ): Envelope.type <br/> DATA_TASK_STATUS_RESPONSE
+        Backend (REQ) ->> Frontend: DataTaskStatusResponse
+    end
+
+    Note left of momd: momd task finished
+    Note right of Frontend: Envelope.type <br/> DATA_TASK_RESULT_REQUEST
+    Frontend -->> Backend (REQ): DataTaskResultRequest
+    Backend (REQ) -->> momd: Get task result object
+    momd ->> Backend (REQ): Return task result object
+    Note left of Backend (REQ): Envelope.type <br/> DATA_DATASET_RECORD_RESULT
+    Backend (REQ) ->> Frontend: DatasetRecordResult
 ```
 
 # Expected deliverable
