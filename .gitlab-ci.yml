@@ -48,7 +48,6 @@ build_docker:
 build_sensor_service:
   stage: build
   script:
-    - make update_protobufs
     - make
   artifacts:
     paths:
@@ -57,7 +56,6 @@ build_sensor_service:
 test_sensor_service:
   stage: test
   script:
-    - make update_protobufs
     - make coverage
   dependencies:
     - build_sensor_service
