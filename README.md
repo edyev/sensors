@@ -6,7 +6,7 @@ graph TD;
     Server<--SensorA;
     Server<--SensorB;
     Server<--SensorC;
-    Server-->QueryClient;
+    QueryClient<--Server;
 ```
 
 # Expected deliverable
