@@ -41,10 +41,9 @@ You will be expected to add to the existing code and build:
 * A client can request the latest submitted value for a particular signal name.
 * A client can query past values for a certain signal based on signal name and/or timestamps.
 * Sensor data is persisted between server instances using SQLite database.
-
+* Messages between server and client serialized using Google Protocol Buffers.
 
 # Additional features - bonus points if you finish these as well
-* Messages between server and client serialized using Google Protocol Buffers.
 * Perform unit testing using a test framework such as Google Test
 * Track signal “status” using boolean thresholding (i.e. have an signal exhibit an error condition if it’s value surpasses a configured level)
 
