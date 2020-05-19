@@ -1,4 +1,13 @@
 ########################
+# create protobuf
+########################
+# compile proto_files
+set(PROTO_FILES
+    ${CMAKE_SOURCE_DIR}/proto_files/sensor_service.proto
+)
+protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS ${PROTO_FILES})
+
+########################
 # define libsensor_service build
 ########################
 add_library(libsensor_service STATIC "")
