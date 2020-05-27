@@ -1,5 +1,5 @@
 # Challenge goal
-Create a server application that tracks sensor values submitted by one or more different client applications running on the same machine. A client can subsequently request previous values by signal name for a given sensor. Server and client are expected to be run under an embedded Linux environment with constrained resources, so care should be taken to be conservative of algorithms/libraries used. For this task, a test build running under macOS is also acceptable.
+Create a server application that records sensor values submitted by one or more different client applications running on the same machine. Envision a system with numerous services managing various subsystems/peripherals. For example, one could track free disk space of the system, PCR heater temperature, or sample location in the cartridge. A unique "signal name" is submitted with the signal value for correlating different data submissions at a later time. A client can subsequently request previous values using the unique signal name given when submitting sensor reading. Server and client are expected to be run under an embedded Linux environment with constrained resources, so care should be taken to be conservative of algorithms/libraries used. For this task, a test build running under macOS is also acceptable.
 
 ```mermaid
   sequenceDiagram
@@ -40,7 +40,7 @@ You will be expected to add to the existing code and build:
 * Past sensor readings are stored with timestamps.
 * A client can request the latest submitted value for a particular signal name.
 * A client can query past values for a certain signal based on signal name and/or timestamps.
-* Sensor data is persisted between server instances using SQLite database.
+* Sensor data is persisted between server instances using SQLite database (only a single server instance needs at a given time).
 * Messages between server and client serialized using Google Protocol Buffers.
 
 # Additional features - bonus points if you finish these as well
