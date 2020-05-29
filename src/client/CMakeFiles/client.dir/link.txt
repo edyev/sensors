@@ -1,0 +1,1 @@
+/usr/bin/c++  -g   CMakeFiles/client.dir/client.cpp.o  -o client  -Wl,-rpath,/usr/local/lib /usr/local/lib/libprotobuf.so /usr/local/lib/libnnxx.a ../sensor_service/libsensor_service.a /usr/local/lib/libprotobuf.so /usr/local/lib/libnnxx.a /usr/local/lib/libnanomsg.so.5.1.0 -lanl -lrt -lpthread -lnsl -lpthread 

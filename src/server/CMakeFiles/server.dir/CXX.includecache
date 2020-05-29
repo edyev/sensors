@@ -1,0 +1,36 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/eddie/service_challenge/src/server/server.cpp
+iostream
+-
+thread
+-
+vector
+-
+server.hpp
+/home/eddie/service_challenge/src/server/server.hpp
+
+include/server.hpp
+iostream
+-
+nanomsg/nn.h
+-
+nanomsg/pair.h
+-
+string.h
+-
+string
+-
+sqlite/sqlite3.h
+-
+
+include/sqlite/sqlite3.h
+stdarg.h
+-
+

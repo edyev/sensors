@@ -1,0 +1,2 @@
+/usr/bin/ar qc libsensor_service.a  CMakeFiles/libsensor_service.dir/sensor_service.cpp.o CMakeFiles/libsensor_service.dir/sensor_service.pb.cc.o
+/usr/bin/ranlib libsensor_service.a

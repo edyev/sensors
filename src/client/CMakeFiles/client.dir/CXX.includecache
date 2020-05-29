@@ -1,0 +1,34 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/eddie/service_challenge/src/client/client.cpp
+iostream
+-
+client.hpp
+/home/eddie/service_challenge/src/client/client.hpp
+
+include/client.hpp
+iostream
+-
+cstdlib
+-
+ctime
+-
+nanomsg/nn.h
+-
+nanomsg/pair.h
+-
+string.h
+-
+inttypes.h
+-
+string
+-
+chrono
+-
+

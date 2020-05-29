@@ -70,7 +70,7 @@ endif()
 # Optional fourth parameter is passed as arguments to _testrunner
 #   Pass them in list form, e.g.: "-j;2" for -j 2
 function(SETUP_TARGET_FOR_COVERAGE _targetname _testrunner _outputname)
-
+	message(STATUS "------------------------------------------${_outputname}")
     if(NOT LCOV_PATH)
         message(FATAL_ERROR "lcov not found! Aborting...")
     endif()
