@@ -3,16 +3,14 @@
 #include <vector>
 #include "server.hpp"
 
-void receive_thread();
+#define MAX_THREADS 8
 
 int main(int argc, char *argv[])
 {
     int err;
     std::vector<std::thread> threads;
     std::thread thr;
-    Server* s = new Server("ipc:///tmp/__socket11.ipc");
-
-    std::cout << "I'm a server!" << std::endl;
+    Server* s = new Server("ipc:///tmp/__socket12.ipc");
 
     err = s->bind();
     if (err < 0)
@@ -22,23 +20,24 @@ int main(int argc, char *argv[])
     if (err < 0)
         throw std::runtime_error("Error while connecting socket");
 
-    int i = 4;
-    while(i--){
-        std::cout << "Thread " << i << std::endl;
-        thr = std::thread(&Server::receive, s);
-        threads.push_back(std::move(thr));
-    }
-    std::cout << "There are threads"<< threads.size() << std::endl;
-    for (auto i = threads.begin(); i != threads.end(); ++i){
-        std::cout << "Joining ..." << std::endl;
-        i->join();
-    }
+    while(1){
+        for(int i = 0; i < MAX_THREADS; ++i){
+            thr = std::thread(&Server::receive, s);
+            threads.push_back(std::move(thr));
 
+        }
+
+        for (auto i = threads.begin(); i != threads.end(); ++i){
+            if(i->joinable()){
+                i->join();
+            }
+
+        }
+        threads.empty();
+    }
     delete s;
     return 0;
 }
 
-void receive_thread(){
-    std::cout << __func__ << std::endl;
-}
+
 

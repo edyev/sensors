@@ -11,14 +11,14 @@
 class Client {
 public:
     Client(std::string path):_socket_path(path){
-        std::cout << "Client constructor" << std::endl;  
         this->_socket = nn_socket(AF_SP, NN_PAIR);
         if (this->_socket < 0)
             throw std::runtime_error("Connection failed");
         srand((unsigned) time(0));
+        std::cout << "Client created successfully!" << std::endl;  
+
     };
     ~Client(){
-        std::cout << "Client desconstructor" << std::endl;
 
     };
     int bind(){
@@ -60,8 +60,9 @@ public:
                 std::chrono::system_clock::now());
         payload = std::ctime(&timestamp);
         payload = payload.substr(0, payload.size()-1);
-        payload += std::string(",") + 
-            this->getName() + std::string(",") + 
+        payload.insert(0, std::string("\'"));
+        payload += std::string("\', \'") + 
+            this->getName() + std::string("\' ,") + 
             std::to_string(this->getValue());
 
         return payload;
